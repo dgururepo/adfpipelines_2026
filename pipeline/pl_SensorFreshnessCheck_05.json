@@ -1,0 +1,162 @@
+{
+	"name": "pl_SensorFreshnessCheck_05",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetFileMeta",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_sensor_telemetry_05",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"lastModified",
+						"exists"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ComputeStaleness",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetFileMeta",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "v_Stale",
+					"value": {
+						"value": "@greater(\n    subtractFromTime(utcNow(),25 ,'Hour')\n    ,activity('GetFileMeta').output.lastModified\n    )\n)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Checfreshness",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "ComputeStaleness",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@not(variables('v_Stale'))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "CopySensorFile",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"wildcardFolderPath": "sensor_telemetry",
+										"wildcardFileName": "*",
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"preCopyScript": "Drop table if exists telemetryschema.sensortelemetry",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_sensor_telemetry_05",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_sink_sensortelemetry_sqltable_05",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_schemaname": "telemetryschema",
+										"p_tablename": "sensortelemetry"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"p_maxAgeHours": {
+				"type": "int",
+				"defaultValue": 25
+			},
+			"p_isStale": {
+				"type": "bool",
+				"defaultValue": false
+			}
+		},
+		"variables": {
+			"v_Stale": {
+				"type": "Boolean",
+				"defaultValue": false
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-06-29T19:02:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

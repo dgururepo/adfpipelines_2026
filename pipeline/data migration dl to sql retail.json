@@ -1,0 +1,190 @@
+{
+	"name": "data migration dl to sql retail",
+	"properties": {
+		"activities": [
+			{
+				"name": "fetch metadata",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_sql_sink_params_03",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_schemaname": "batch",
+							"p_tablename": "Config_Table_2"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "loop over metadata",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "fetch metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('fetch metadata').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "datalake to sql database raw",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_source_files_params_03",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_container": {
+											"value": "@item().Source_Container",
+											"type": "Expression"
+										},
+										"p_directory": {
+											"value": "@item().Source_Directory",
+											"type": "Expression"
+										},
+										"p_filename": {
+											"value": "@item().File_Name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_sql_sink_params_03",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_schemaname": {
+											"value": "@item().Raw_Schema",
+											"type": "Expression"
+										},
+										"p_tablename": {
+											"value": "@item().Raw_Table",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Sql database raw to stage",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "datalake to sql database raw",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "raw to stage load",
+									"type": "DataFlowReference",
+									"datasetParameters": {
+										"source1": {
+											"schema": {
+												"value": "@item().Raw_Schema",
+												"type": "Expression"
+											},
+											"table": {
+												"value": "@item().Raw_Table",
+												"type": "Expression"
+											}
+										},
+										"sink1": {
+											"schema": {
+												"value": "@item().Stage_Schema",
+												"type": "Expression"
+											},
+											"table": {
+												"value": "@item().Stage_Table",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-06-30T03:32:49Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

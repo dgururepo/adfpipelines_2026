@@ -1,0 +1,16 @@
+{
+	"name": "ds_loadto_mysql_sink_02",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_loadto_mysql_sink_02",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureMySqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "daily_sales"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,77 @@
+{
+	"name": "ds_source_invoices_04",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_source_storage_04",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "invoices",
+				"fileSystem": "inbound"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "invoice_id",
+				"type": "String"
+			},
+			{
+				"name": "invoice_date",
+				"type": "String"
+			},
+			{
+				"name": "due_date",
+				"type": "String"
+			},
+			{
+				"name": "vendor_id",
+				"type": "String"
+			},
+			{
+				"name": "vendor_name",
+				"type": "String"
+			},
+			{
+				"name": "po_number",
+				"type": "String"
+			},
+			{
+				"name": "line_item",
+				"type": "String"
+			},
+			{
+				"name": "description",
+				"type": "String"
+			},
+			{
+				"name": "quantity",
+				"type": "String"
+			},
+			{
+				"name": "unit_price",
+				"type": "String"
+			},
+			{
+				"name": "line_total",
+				"type": "String"
+			},
+			{
+				"name": "currency",
+				"type": "String"
+			},
+			{
+				"name": "status",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

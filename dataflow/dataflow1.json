@@ -1,0 +1,72 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_source_files_params_03",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_sink_params_03",
+						"type": "DatasetReference"
+					},
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "ls_source_files_params",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          rownames as short,",
+				"          district as integer,",
+				"          school as string,",
+				"          county as string,",
+				"          grades as string,",
+				"          students as short,",
+				"          teachers as double,",
+				"          calworks as double,",
+				"          lunch as double,",
+				"          computer as short,",
+				"          expenditure as double,",
+				"          income as double,",
+				"          english as double,",
+				"          read as double,",
+				"          math as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 alterRow(insertIf(isNull(english)||english==0),",
+				"     upsertIf(!isNull(rownames)&&math>600.0&&read>600.0),",
+				"     updateIf(!isNull(rownames)&&math<=600.0),",
+				"     deleteIf(students>200&&!isNull(school))) ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:(true()),",
+				"     keys:['rownames'],",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

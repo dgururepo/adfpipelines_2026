@@ -1,0 +1,32 @@
+{
+	"name": "ds_sink_sensortelemetry_sqltable_05",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sink_sensortelemetry_sqltable_05",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_schemaname": {
+				"type": "string",
+				"defaultValue": "telemetryschema"
+			},
+			"p_tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_schemaname",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_tablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

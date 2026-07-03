@@ -1,0 +1,17 @@
+{
+	"name": "ls_sink_sql_noparams",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "sqlserverforpractice1.database.windows.net",
+			"database": "sampleDb",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "adsasql",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQENDN0ZBQjdBLTdBMUUtNDAzNi05NjFBLTRCMTQ2NTY5NzAwNF9jZTg0NjgyNi1iOWE5LTRhYzUtODkwNS0wMjUyMDMzZmMzY2YiDQp9"
+		}
+	}
+}

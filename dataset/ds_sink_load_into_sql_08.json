@@ -1,0 +1,31 @@
+{
+	"name": "ds_sink_load_into_sql_08",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sink_load_into_sql_08",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_schema": {
+				"type": "string"
+			},
+			"p_tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_tablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

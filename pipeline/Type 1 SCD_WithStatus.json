@@ -1,0 +1,572 @@
+{
+	"name": "Type 1 SCD_WithStatus",
+	"properties": {
+		"activities": [
+			{
+				"name": "Configuration values",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "pipeline_start_date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Azuresqldatabase",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "batch",
+							"table": "Config_Table_2"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "SCD 1 LOOP",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "scdtype1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('scdtype1').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "TypeOneSCDDataflow",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "TypeOneSCDDataflow",
+									"type": "DataFlowReference",
+									"parameters": {
+										"primarykey": {
+											"value": "'@{item().stage_table_pk}'",
+											"type": "Expression"
+										}
+									},
+									"datasetParameters": {
+										"HumanResource": {
+											"schema": {
+												"value": "@item().Raw_schema",
+												"type": "Expression"
+											},
+											"table": {
+												"value": "@item().raw_table",
+												"type": "Expression"
+											}
+										},
+										"processing": {
+											"schema": {
+												"value": "@item().stage_schema",
+												"type": "Expression"
+											},
+											"table": {
+												"value": "@item().stage_table",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "Recon Status and Counts",
+							"type": "Script",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
+							"dependsOn": [
+								{
+									"activity": "Load_Status_Scusses",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "source_schema",
+												"type": "String",
+												"value": {
+													"value": "@item().schema_name",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "sink_schema",
+												"type": "String",
+												"value": {
+													"value": "@item().sink_schemaname",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "source_table_name",
+												"type": "String",
+												"value": {
+													"value": "@item().table_name",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "sink_table_name",
+												"type": "String",
+												"value": {
+													"value": "@item().sink_tablename",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "primarykey",
+												"type": "String",
+												"value": {
+													"value": "@item().primary_key",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "recon_name",
+												"type": "String",
+												"value": {
+													"value": "@item().recon_name",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": {
+											"value": "SELECT CASE WHEN COUNT(1) = 0 THEN 'RECON_SUCCEDED' ELSE 'RECON_FAILED' END AS RECON_RESULT\nFROM\n(\nselect sum(ISNULL(@{item().primary_key},0)) as primarykey, sum(cast(checksum(substring(ISNULL(cast(@{item().Recon_name} as varchar),0),2,3)) as bigint)) as recon_name from @{item().schema_name}.@{item().table_name}\nexcept\nselect sum(ISNULL(@{item().primary_key},0)) as primarykey, sum(cast(checksum(substring(ISNULL(cast(@{item().Recon_name} as varchar),0),2,3)) as bigint)) as recon_name from @{item().schema_name}.@{item().table_name}\n) RECON;",
+											"type": "Expression"
+										}
+									},
+									{
+										"parameters": [
+											{
+												"name": "source_schema",
+												"type": "String",
+												"value": {
+													"value": "@item().schema_name",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "source_table_name",
+												"type": "String",
+												"value": {
+													"value": "@item().table_name",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": {
+											"value": "select count(*) as source_count from @{item().schema_name}.@{item().table_name}",
+											"type": "Expression"
+										}
+									},
+									{
+										"parameters": [
+											{
+												"name": "sink_schema",
+												"type": "String",
+												"value": {
+													"value": "@item().sink_schemaname",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "sink_table_name",
+												"type": "String",
+												"value": {
+													"value": "@item().sink_tablename",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": {
+											"value": "select count(*) as sink_count from @{item().sink_schemaname}.@{item().sink_tablename};",
+											"type": "Expression"
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Recon Status Insert",
+							"type": "Script",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
+							"dependsOn": [
+								{
+									"activity": "Recon Status and Counts",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "recon_status",
+												"type": "String",
+												"value": {
+													"value": "@activity('Recon Status and Counts').output.resultSets[0].rows[0].RECON_RESULT",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "source_count",
+												"type": "Int32",
+												"value": {
+													"value": "@activity('Recon Status and Counts').output.resultSets[1].rows[0].source_count",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "sink_count",
+												"type": "Int32",
+												"value": {
+													"value": "@activity('Recon Status and Counts').output.resultSets[2].rows[0].sink_count",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "source_table_name",
+												"type": "String",
+												"value": {
+													"value": "@item().table_name",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "sink_table_name",
+												"type": "String",
+												"value": {
+													"value": "@item().sink_tablename",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": " Insert into processing.INTEGRATION_STATUS (source_table_name,sink_table_name,source_count, sink_count, recon_status )\n        values (@source_table_name,@sink_table_name, @source_count, @sink_count, @recon_status);"
+									}
+								]
+							}
+						},
+						{
+							"name": "Load_Status_Scusses",
+							"type": "Script",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
+							"dependsOn": [
+								{
+									"activity": "TypeOneSCDDataflow",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "load_type",
+												"type": "String",
+												"value": "SCD_Type1",
+												"direction": "Input"
+											},
+											{
+												"name": "pipeline_run_id",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pipeline_start_date",
+												"type": "Datetime",
+												"value": {
+													"value": "@variables('pipeline_start_date')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pipeline_end_date",
+												"type": "Datetime",
+												"value": {
+													"value": "@utcnow()",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "processed_status",
+												"type": "String",
+												"value": "1",
+												"direction": "Input"
+											},
+											{
+												"name": "insert_record_count",
+												"type": "String",
+												"value": {
+													"value": "@activity('TypeOneSCDDataflow').output.runStatus.metrics.processing.rowsWritten",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": "INSERT INTO Status(Load_Type, pipeline_run_id, pipeline_start_date, pipeline_end_date, insert_record_count, processed_status)\nVALUES(@Load_Type, @pipeline_run_id, @pipeline_start_date, @pipeline_end_date, @insert_record_count, @processed_status)"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Load_Status_Failed",
+							"type": "Script",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
+							"dependsOn": [
+								{
+									"activity": "TypeOneSCDDataflow",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "load_type",
+												"type": "String",
+												"value": "SCD_Type1",
+												"direction": "Input"
+											},
+											{
+												"name": "pipeline_run_id",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pipeline_start_date",
+												"type": "Datetime",
+												"value": {
+													"value": "@variables('pipeline_start_date')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pipeline_end_date",
+												"type": "Datetime",
+												"value": {
+													"value": "@utcnow()",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "processed_status",
+												"type": "String",
+												"value": "1",
+												"direction": "Input"
+											},
+											{
+												"name": "insert_record_count",
+												"type": "String",
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": "INSERT INTO Status(Load_Type, pipeline_run_id, pipeline_start_date, pipeline_end_date, insert_record_count, processed_status)\nVALUES(@Load_Type, @pipeline_run_id, @pipeline_start_date, @pipeline_end_date, @insert_record_count, @processed_status)"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "pipeline_start_date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "pipeline_start_date",
+					"value": {
+						"value": "@utcnow()",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "scdtype1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Configuration values",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Configuration values').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().isactive,'True')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"dummy": {
+				"type": "String"
+			},
+			"pipeline_start_date": {
+				"type": "String"
+			},
+			"record_count": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Finalized Pipelines"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-07-03T03:31:59Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
