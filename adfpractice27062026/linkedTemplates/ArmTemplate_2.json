@@ -1,0 +1,1227 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfpractice27062026"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_source_files_params_03",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_sql_sink_params_03",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "ls_source_files_params",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "AlterRow1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          rownames as short,",
+						"          district as integer,",
+						"          school as string,",
+						"          county as string,",
+						"          grades as string,",
+						"          students as short,",
+						"          teachers as double,",
+						"          calworks as double,",
+						"          lunch as double,",
+						"          computer as short,",
+						"          expenditure as double,",
+						"          income as double,",
+						"          english as double,",
+						"          read as double,",
+						"          math as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 alterRow(insertIf(isNull(english)||english==0),",
+						"     upsertIf(!isNull(rownames)&&math>600.0&&read>600.0),",
+						"     updateIf(!isNull(rownames)&&math<=600.0),",
+						"     deleteIf(students>200&&!isNull(school))) ~> AlterRow1",
+						"AlterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:(true()),",
+						"     keys:['rownames'],",
+						"     truncate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_load_rawtab_to_stagetab_08')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable_para",
+								"type": "DatasetReference"
+							},
+							"name": "rawsource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable_para",
+								"type": "DatasetReference"
+							},
+							"name": "stagesink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "alterRow1"
+						}
+					],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> rawsource",
+						"rawsource alterRow(insertIf(true())) ~> alterRow1",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> stagesink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/raw to stage load')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable_para",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable_para",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "alterRow1"
+						}
+					],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> source1",
+						"source1 alterRow(insertIf(true())) ~> alterRow1",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Type 1 SCD_WithStatus')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Configuration values",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "pipeline_start_date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "Azuresqldatabase",
+								"type": "DatasetReference",
+								"parameters": {
+									"schema": "batch",
+									"table": "Config_Table_2"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "SCD 1 LOOP",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "scdtype1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('scdtype1').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "TypeOneSCDDataflow",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "TypeOneSCDDataflow",
+											"type": "DataFlowReference",
+											"parameters": {
+												"primarykey": {
+													"value": "'@{item().stage_table_pk}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"HumanResource": {
+													"schema": {
+														"value": "@item().Raw_schema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@item().raw_table",
+														"type": "Expression"
+													}
+												},
+												"processing": {
+													"schema": {
+														"value": "@item().stage_schema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@item().stage_table",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								},
+								{
+									"name": "Recon Status and Counts",
+									"type": "Script",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [
+										{
+											"activity": "Load_Status_Scusses",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase1",
+										"type": "LinkedServiceReference"
+									},
+									"typeProperties": {
+										"scripts": [
+											{
+												"parameters": [
+													{
+														"name": "source_schema",
+														"type": "String",
+														"value": {
+															"value": "@item().schema_name",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "sink_schema",
+														"type": "String",
+														"value": {
+															"value": "@item().sink_schemaname",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "source_table_name",
+														"type": "String",
+														"value": {
+															"value": "@item().table_name",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "sink_table_name",
+														"type": "String",
+														"value": {
+															"value": "@item().sink_tablename",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "primarykey",
+														"type": "String",
+														"value": {
+															"value": "@item().primary_key",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "recon_name",
+														"type": "String",
+														"value": {
+															"value": "@item().recon_name",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													}
+												],
+												"type": "Query",
+												"text": {
+													"value": "SELECT CASE WHEN COUNT(1) = 0 THEN 'RECON_SUCCEDED' ELSE 'RECON_FAILED' END AS RECON_RESULT\nFROM\n(\nselect sum(ISNULL(@{item().primary_key},0)) as primarykey, sum(cast(checksum(substring(ISNULL(cast(@{item().Recon_name} as varchar),0),2,3)) as bigint)) as recon_name from @{item().schema_name}.@{item().table_name}\nexcept\nselect sum(ISNULL(@{item().primary_key},0)) as primarykey, sum(cast(checksum(substring(ISNULL(cast(@{item().Recon_name} as varchar),0),2,3)) as bigint)) as recon_name from @{item().schema_name}.@{item().table_name}\n) RECON;",
+													"type": "Expression"
+												}
+											},
+											{
+												"parameters": [
+													{
+														"name": "source_schema",
+														"type": "String",
+														"value": {
+															"value": "@item().schema_name",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "source_table_name",
+														"type": "String",
+														"value": {
+															"value": "@item().table_name",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													}
+												],
+												"type": "Query",
+												"text": {
+													"value": "select count(*) as source_count from @{item().schema_name}.@{item().table_name}",
+													"type": "Expression"
+												}
+											},
+											{
+												"parameters": [
+													{
+														"name": "sink_schema",
+														"type": "String",
+														"value": {
+															"value": "@item().sink_schemaname",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "sink_table_name",
+														"type": "String",
+														"value": {
+															"value": "@item().sink_tablename",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													}
+												],
+												"type": "Query",
+												"text": {
+													"value": "select count(*) as sink_count from @{item().sink_schemaname}.@{item().sink_tablename};",
+													"type": "Expression"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "Recon Status Insert",
+									"type": "Script",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [
+										{
+											"activity": "Recon Status and Counts",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase1",
+										"type": "LinkedServiceReference"
+									},
+									"typeProperties": {
+										"scripts": [
+											{
+												"parameters": [
+													{
+														"name": "recon_status",
+														"type": "String",
+														"value": {
+															"value": "@activity('Recon Status and Counts').output.resultSets[0].rows[0].RECON_RESULT",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "source_count",
+														"type": "Int32",
+														"value": {
+															"value": "@activity('Recon Status and Counts').output.resultSets[1].rows[0].source_count",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "sink_count",
+														"type": "Int32",
+														"value": {
+															"value": "@activity('Recon Status and Counts').output.resultSets[2].rows[0].sink_count",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "source_table_name",
+														"type": "String",
+														"value": {
+															"value": "@item().table_name",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "sink_table_name",
+														"type": "String",
+														"value": {
+															"value": "@item().sink_tablename",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													}
+												],
+												"type": "Query",
+												"text": " Insert into processing.INTEGRATION_STATUS (source_table_name,sink_table_name,source_count, sink_count, recon_status )\n        values (@source_table_name,@sink_table_name, @source_count, @sink_count, @recon_status);"
+											}
+										]
+									}
+								},
+								{
+									"name": "Load_Status_Scusses",
+									"type": "Script",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [
+										{
+											"activity": "TypeOneSCDDataflow",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase1",
+										"type": "LinkedServiceReference"
+									},
+									"typeProperties": {
+										"scripts": [
+											{
+												"parameters": [
+													{
+														"name": "load_type",
+														"type": "String",
+														"value": "SCD_Type1",
+														"direction": "Input"
+													},
+													{
+														"name": "pipeline_run_id",
+														"type": "String",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "pipeline_start_date",
+														"type": "Datetime",
+														"value": {
+															"value": "@variables('pipeline_start_date')",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "pipeline_end_date",
+														"type": "Datetime",
+														"value": {
+															"value": "@utcnow()",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "processed_status",
+														"type": "String",
+														"value": "1",
+														"direction": "Input"
+													},
+													{
+														"name": "insert_record_count",
+														"type": "String",
+														"value": {
+															"value": "@activity('TypeOneSCDDataflow').output.runStatus.metrics.processing.rowsWritten",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													}
+												],
+												"type": "Query",
+												"text": "INSERT INTO Status(Load_Type, pipeline_run_id, pipeline_start_date, pipeline_end_date, insert_record_count, processed_status)\nVALUES(@Load_Type, @pipeline_run_id, @pipeline_start_date, @pipeline_end_date, @insert_record_count, @processed_status)"
+											}
+										],
+										"scriptBlockExecutionTimeout": "02:00:00"
+									}
+								},
+								{
+									"name": "Load_Status_Failed",
+									"type": "Script",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [
+										{
+											"activity": "TypeOneSCDDataflow",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase1",
+										"type": "LinkedServiceReference"
+									},
+									"typeProperties": {
+										"scripts": [
+											{
+												"parameters": [
+													{
+														"name": "load_type",
+														"type": "String",
+														"value": "SCD_Type1",
+														"direction": "Input"
+													},
+													{
+														"name": "pipeline_run_id",
+														"type": "String",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "pipeline_start_date",
+														"type": "Datetime",
+														"value": {
+															"value": "@variables('pipeline_start_date')",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "pipeline_end_date",
+														"type": "Datetime",
+														"value": {
+															"value": "@utcnow()",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													},
+													{
+														"name": "processed_status",
+														"type": "String",
+														"value": "1",
+														"direction": "Input"
+													},
+													{
+														"name": "insert_record_count",
+														"type": "String",
+														"value": {
+															"value": "0",
+															"type": "Expression"
+														},
+														"direction": "Input"
+													}
+												],
+												"type": "Query",
+												"text": "INSERT INTO Status(Load_Type, pipeline_run_id, pipeline_start_date, pipeline_end_date, insert_record_count, processed_status)\nVALUES(@Load_Type, @pipeline_run_id, @pipeline_start_date, @pipeline_end_date, @insert_record_count, @processed_status)"
+											}
+										],
+										"scriptBlockExecutionTimeout": "02:00:00"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "pipeline_start_date",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "pipeline_start_date",
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "scdtype1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Configuration values",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Configuration values').output.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(item().isactive,'True')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"dummy": {
+						"type": "String"
+					},
+					"pipeline_start_date": {
+						"type": "String"
+					},
+					"record_count": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Finalized Pipelines"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-07-03T03:31:59Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/data migration dl to sql retail')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "fetch metadata",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_sql_sink_params_03",
+								"type": "DatasetReference",
+								"parameters": {
+									"p_schemaname": "batch",
+									"p_tablename": "Config_Table_2"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "loop over metadata",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "fetch metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('fetch metadata').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "datalake to sql database raw",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "SqlServerSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate"
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_source_files_params_03",
+											"type": "DatasetReference",
+											"parameters": {
+												"p_container": {
+													"value": "@item().Source_Container",
+													"type": "Expression"
+												},
+												"p_directory": {
+													"value": "@item().Source_Directory",
+													"type": "Expression"
+												},
+												"p_filename": {
+													"value": "@item().File_Name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_sql_sink_params_03",
+											"type": "DatasetReference",
+											"parameters": {
+												"p_schemaname": {
+													"value": "@item().Raw_Schema",
+													"type": "Expression"
+												},
+												"p_tablename": {
+													"value": "@item().Raw_Table",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Sql database raw to stage",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [
+										{
+											"activity": "datalake to sql database raw",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "raw to stage load",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"source1": {
+													"schema": {
+														"value": "@item().Raw_Schema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@item().Raw_Table",
+														"type": "Expression"
+													}
+												},
+												"sink1": {
+													"schema": {
+														"value": "@item().Stage_Schema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@item().Stage_Table",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-06-30T03:32:49Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/raw to stage load')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_Loadfiles_to_sql_config_08')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_sink_load_into_sql_08",
+								"type": "DatasetReference",
+								"parameters": {
+									"p_schema": "stageschema",
+									"p_tablename": "ETL_Config"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "SqlServerSink",
+											"preCopyScript": {
+												"value": "@concat('TRUNCATE TABLE [RawSchema].[', replace(item().RawTable, '.csv', ''), ']')",
+												"type": "Expression"
+											},
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_adls_csvfiles_params_08",
+											"type": "DatasetReference",
+											"parameters": {
+												"p_container": {
+													"value": "@item().SourceContainer",
+													"type": "Expression"
+												},
+												"p_directory": {
+													"value": "@item().SourceDirectory",
+													"type": "Expression"
+												},
+												"p_filename": {
+													"value": "@item().FileName",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_sink_load_into_sql_08",
+											"type": "DatasetReference",
+											"parameters": {
+												"p_schema": {
+													"value": "@item().RawSchema",
+													"type": "Expression"
+												},
+												"p_tablename": {
+													"value": "@item().RawTable",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Data flow1",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [
+										{
+											"activity": "Copy data1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_load_rawtab_to_stagetab_08",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"rawsource": {
+													"schema": {
+														"value": "@item().RawSchema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@item().RawTable",
+														"type": "Expression"
+													}
+												},
+												"stagesink": {
+													"schema": {
+														"value": "@item().StageSchema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@item().StageTable",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-07-01T19:35:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_load_rawtab_to_stagetab_08')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dataflow_csv_to_sqlLoad_03')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"p_container": "input",
+										"p_directory": "rawdata",
+										"p_filename": "CASchools.csv"
+									},
+									"sink1": {
+										"p_schemaname": "rawschema",
+										"p_tablename": "CASchools"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-06-28T17:53:34Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		}
+	]
+}

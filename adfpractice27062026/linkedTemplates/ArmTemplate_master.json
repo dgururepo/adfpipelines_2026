@@ -1,0 +1,376 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfpractice27062026"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
+		},
+		"ls_adls_csvfiles_params_08_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_csvfiles_params_08'"
+		},
+		"ls_adls_sink_04_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_sink_04'"
+		},
+		"ls_daily_sales_files_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_daily_sales_files'"
+		},
+		"ls_daily_sales_filteredfile_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_daily_sales_filteredfile'"
+		},
+		"ls_loadto_mysql_sink_02_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_loadto_mysql_sink_02'"
+		},
+		"ls_mysql_sink_params_03_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_mysql_sink_params_03'"
+		},
+		"ls_sensor_telemetry_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sensor_telemetry'"
+		},
+		"ls_sink_load_into_sql_08_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_load_into_sql_08'"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sensortelemetry_sqltable_05'"
+		},
+		"ls_sink_sql_noparams_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sql_noparams'"
+		},
+		"ls_sinkfiles_bronze_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sinkfiles_bronze'"
+		},
+		"ls_source_csv_noparams_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_source_csv_noparams'"
+		},
+		"ls_source_files_params_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_source_files_params'"
+		},
+		"ls_source_storage_04_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_source_storage_04'"
+		},
+		"ls_sourcefiles_inbound_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sourcefiles_inbound'"
+		},
+		"ls_sql_sink_params_03_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sql_sink_params_03'"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampledb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_adls_csvfiles_params_08_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_adls_sink_04_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_daily_sales_files_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_daily_sales_filteredfile_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sensor_telemetry_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pitelemetrystorage.dfs.core.windows.net/"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDB"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "mysqlserverforpractice.mysql.database.azure.com"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDb"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDb"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_sinkfiles_bronze_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_csv_noparams_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_files_params_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_storage_04_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sourcefiles_inbound_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDb"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adfpractice27062026_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSqlDatabase1_password": {
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					},
+					"ls_adls_csvfiles_params_08_accountKey": {
+						"value": "[parameters('ls_adls_csvfiles_params_08_accountKey')]"
+					},
+					"ls_adls_sink_04_accountKey": {
+						"value": "[parameters('ls_adls_sink_04_accountKey')]"
+					},
+					"ls_daily_sales_files_accountKey": {
+						"value": "[parameters('ls_daily_sales_files_accountKey')]"
+					},
+					"ls_daily_sales_filteredfile_accountKey": {
+						"value": "[parameters('ls_daily_sales_filteredfile_accountKey')]"
+					},
+					"ls_loadto_mysql_sink_02_connectionString": {
+						"value": "[parameters('ls_loadto_mysql_sink_02_connectionString')]"
+					},
+					"ls_mysql_sink_params_03_connectionString": {
+						"value": "[parameters('ls_mysql_sink_params_03_connectionString')]"
+					},
+					"ls_sensor_telemetry_accountKey": {
+						"value": "[parameters('ls_sensor_telemetry_accountKey')]"
+					},
+					"ls_sink_load_into_sql_08_password": {
+						"value": "[parameters('ls_sink_load_into_sql_08_password')]"
+					},
+					"ls_sink_sensortelemetry_sqltable_05_password": {
+						"value": "[parameters('ls_sink_sensortelemetry_sqltable_05_password')]"
+					},
+					"ls_sink_sql_noparams_password": {
+						"value": "[parameters('ls_sink_sql_noparams_password')]"
+					},
+					"ls_sinkfiles_bronze_accountKey": {
+						"value": "[parameters('ls_sinkfiles_bronze_accountKey')]"
+					},
+					"ls_source_csv_noparams_accountKey": {
+						"value": "[parameters('ls_source_csv_noparams_accountKey')]"
+					},
+					"ls_source_files_params_accountKey": {
+						"value": "[parameters('ls_source_files_params_accountKey')]"
+					},
+					"ls_source_storage_04_accountKey": {
+						"value": "[parameters('ls_source_storage_04_accountKey')]"
+					},
+					"ls_sourcefiles_inbound_accountKey": {
+						"value": "[parameters('ls_sourcefiles_inbound_accountKey')]"
+					},
+					"ls_sql_sink_params_03_password": {
+						"value": "[parameters('ls_sql_sink_params_03_password')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
+					},
+					"ls_adls_csvfiles_params_08_properties_typeProperties_url": {
+						"value": "[parameters('ls_adls_csvfiles_params_08_properties_typeProperties_url')]"
+					},
+					"ls_adls_sink_04_properties_typeProperties_url": {
+						"value": "[parameters('ls_adls_sink_04_properties_typeProperties_url')]"
+					},
+					"ls_daily_sales_files_properties_typeProperties_url": {
+						"value": "[parameters('ls_daily_sales_files_properties_typeProperties_url')]"
+					},
+					"ls_daily_sales_filteredfile_properties_typeProperties_url": {
+						"value": "[parameters('ls_daily_sales_filteredfile_properties_typeProperties_url')]"
+					},
+					"ls_sensor_telemetry_properties_typeProperties_url": {
+						"value": "[parameters('ls_sensor_telemetry_properties_typeProperties_url')]"
+					},
+					"ls_sink_load_into_sql_08_properties_typeProperties_server": {
+						"value": "[parameters('ls_sink_load_into_sql_08_properties_typeProperties_server')]"
+					},
+					"ls_sink_load_into_sql_08_properties_typeProperties_database": {
+						"value": "[parameters('ls_sink_load_into_sql_08_properties_typeProperties_database')]"
+					},
+					"ls_sink_load_into_sql_08_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sink_load_into_sql_08_properties_typeProperties_userName')]"
+					},
+					"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_server": {
+						"value": "[parameters('ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_server')]"
+					},
+					"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_database": {
+						"value": "[parameters('ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_database')]"
+					},
+					"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_userName')]"
+					},
+					"ls_sink_sql_noparams_properties_typeProperties_server": {
+						"value": "[parameters('ls_sink_sql_noparams_properties_typeProperties_server')]"
+					},
+					"ls_sink_sql_noparams_properties_typeProperties_database": {
+						"value": "[parameters('ls_sink_sql_noparams_properties_typeProperties_database')]"
+					},
+					"ls_sink_sql_noparams_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sink_sql_noparams_properties_typeProperties_userName')]"
+					},
+					"ls_sinkfiles_bronze_properties_typeProperties_url": {
+						"value": "[parameters('ls_sinkfiles_bronze_properties_typeProperties_url')]"
+					},
+					"ls_source_csv_noparams_properties_typeProperties_url": {
+						"value": "[parameters('ls_source_csv_noparams_properties_typeProperties_url')]"
+					},
+					"ls_source_files_params_properties_typeProperties_url": {
+						"value": "[parameters('ls_source_files_params_properties_typeProperties_url')]"
+					},
+					"ls_source_storage_04_properties_typeProperties_url": {
+						"value": "[parameters('ls_source_storage_04_properties_typeProperties_url')]"
+					},
+					"ls_sourcefiles_inbound_properties_typeProperties_url": {
+						"value": "[parameters('ls_sourcefiles_inbound_properties_typeProperties_url')]"
+					},
+					"ls_sql_sink_params_03_properties_typeProperties_server": {
+						"value": "[parameters('ls_sql_sink_params_03_properties_typeProperties_server')]"
+					},
+					"ls_sql_sink_params_03_properties_typeProperties_database": {
+						"value": "[parameters('ls_sql_sink_params_03_properties_typeProperties_database')]"
+					},
+					"ls_sql_sink_params_03_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sql_sink_params_03_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adfpractice27062026_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfpractice27062026_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adfpractice27062026_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfpractice27062026_ArmTemplate_1')]"
+			]
+		}
+	]
+}

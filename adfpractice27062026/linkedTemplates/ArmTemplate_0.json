@@ -1,0 +1,583 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfpractice27062026"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
+		},
+		"ls_adls_csvfiles_params_08_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_csvfiles_params_08'"
+		},
+		"ls_adls_sink_04_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_sink_04'"
+		},
+		"ls_daily_sales_files_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_daily_sales_files'"
+		},
+		"ls_daily_sales_filteredfile_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_daily_sales_filteredfile'"
+		},
+		"ls_loadto_mysql_sink_02_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_loadto_mysql_sink_02'"
+		},
+		"ls_mysql_sink_params_03_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_mysql_sink_params_03'"
+		},
+		"ls_sensor_telemetry_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sensor_telemetry'"
+		},
+		"ls_sink_load_into_sql_08_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_load_into_sql_08'"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sensortelemetry_sqltable_05'"
+		},
+		"ls_sink_sql_noparams_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sql_noparams'"
+		},
+		"ls_sinkfiles_bronze_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sinkfiles_bronze'"
+		},
+		"ls_source_csv_noparams_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_source_csv_noparams'"
+		},
+		"ls_source_files_params_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_source_files_params'"
+		},
+		"ls_source_storage_04_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_source_storage_04'"
+		},
+		"ls_sourcefiles_inbound_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sourcefiles_inbound'"
+		},
+		"ls_sql_sink_params_03_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sql_sink_params_03'"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampledb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_adls_csvfiles_params_08_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_adls_sink_04_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_daily_sales_files_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_daily_sales_filteredfile_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sensor_telemetry_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pitelemetrystorage.dfs.core.windows.net/"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDB"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "mysqlserverforpractice.mysql.database.azure.com"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDb"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDb"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		},
+		"ls_sinkfiles_bronze_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_csv_noparams_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_files_params_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_storage_04_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sourcefiles_inbound_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampleDb"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adsasql"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_newsample_09')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]",
+					"database": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_adls_csvfiles_params_08')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_adls_csvfiles_params_08_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_adls_csvfiles_params_08_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_adls_sink_04')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_adls_sink_04_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_adls_sink_04_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_daily_sales_files')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_daily_sales_files_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_daily_sales_files_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_daily_sales_filteredfile')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_daily_sales_filteredfile_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_daily_sales_filteredfile_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_loadto_mysql_sink_02')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureMySql",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_loadto_mysql_sink_02_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_mysql_sink_params_03')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureMySql",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_mysql_sink_params_03_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sensor_telemetry')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_sensor_telemetry_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sensor_telemetry_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_load_into_sql_08')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('ls_sink_load_into_sql_08_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sink_load_into_sql_08_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sink_load_into_sql_08_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_load_into_sql_08_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_sensortelemetry_sqltable_05')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_sensortelemetry_sqltable_05_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_sql_noparams')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('ls_sink_sql_noparams_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sink_sql_noparams_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sink_sql_noparams_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_sql_noparams_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sinkfiles_bronze')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_sinkfiles_bronze_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sinkfiles_bronze_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_source_csv_noparams')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_source_csv_noparams_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_source_csv_noparams_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_source_files_params')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_source_files_params_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_source_files_params_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_source_storage_04')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_source_storage_04_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_source_storage_04_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sourcefiles_inbound')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_sourcefiles_inbound_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sourcefiles_inbound_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sql_sink_params_03')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('ls_sql_sink_params_03_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sql_sink_params_03_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sql_sink_params_03_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sql_sink_params_03_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable_para')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Azuresqldatabase')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		}
+	]
+}

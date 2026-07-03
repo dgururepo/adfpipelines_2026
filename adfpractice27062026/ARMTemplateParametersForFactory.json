@@ -1,0 +1,135 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfpractice27062026"
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"ls_adls_csvfiles_params_08_accountKey": {
+			"value": ""
+		},
+		"ls_adls_sink_04_accountKey": {
+			"value": ""
+		},
+		"ls_daily_sales_files_accountKey": {
+			"value": ""
+		},
+		"ls_daily_sales_filteredfile_accountKey": {
+			"value": ""
+		},
+		"ls_loadto_mysql_sink_02_connectionString": {
+			"value": ""
+		},
+		"ls_mysql_sink_params_03_connectionString": {
+			"value": ""
+		},
+		"ls_sensor_telemetry_accountKey": {
+			"value": ""
+		},
+		"ls_sink_load_into_sql_08_password": {
+			"value": ""
+		},
+		"ls_sink_sensortelemetry_sqltable_05_password": {
+			"value": ""
+		},
+		"ls_sink_sql_noparams_password": {
+			"value": ""
+		},
+		"ls_sinkfiles_bronze_accountKey": {
+			"value": ""
+		},
+		"ls_source_csv_noparams_accountKey": {
+			"value": ""
+		},
+		"ls_source_files_params_accountKey": {
+			"value": ""
+		},
+		"ls_source_storage_04_accountKey": {
+			"value": ""
+		},
+		"ls_sourcefiles_inbound_accountKey": {
+			"value": ""
+		},
+		"ls_sql_sink_params_03_password": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "sqlserverforpractice1.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "sampledb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "adsasql"
+		},
+		"ls_adls_csvfiles_params_08_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_adls_sink_04_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_daily_sales_files_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_daily_sales_filteredfile_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sensor_telemetry_properties_typeProperties_url": {
+			"value": "https://pitelemetrystorage.dfs.core.windows.net/"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_server": {
+			"value": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_database": {
+			"value": "sampleDB"
+		},
+		"ls_sink_load_into_sql_08_properties_typeProperties_userName": {
+			"value": "adsasql"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_server": {
+			"value": "mysqlserverforpractice.mysql.database.azure.com"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_database": {
+			"value": "sampleDb"
+		},
+		"ls_sink_sensortelemetry_sqltable_05_properties_typeProperties_userName": {
+			"value": "adsasql"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_server": {
+			"value": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_database": {
+			"value": "sampleDb"
+		},
+		"ls_sink_sql_noparams_properties_typeProperties_userName": {
+			"value": "adsasql"
+		},
+		"ls_sinkfiles_bronze_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_csv_noparams_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_files_params_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_source_storage_04_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sourcefiles_inbound_properties_typeProperties_url": {
+			"value": "https://stgtopractice27062026.dfs.core.windows.net/"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_server": {
+			"value": "sqlserverforpractice1.database.windows.net"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_database": {
+			"value": "sampleDb"
+		},
+		"ls_sql_sink_params_03_properties_typeProperties_userName": {
+			"value": "adsasql"
+		}
+	}
+}
