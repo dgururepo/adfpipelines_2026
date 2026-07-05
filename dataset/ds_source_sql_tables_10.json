@@ -1,0 +1,30 @@
+{
+	"name": "ds_source_sql_tables_10",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_source_sql_tables_10",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_schemaname": {
+				"type": "string"
+			},
+			"p_tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_schemaname",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_tablename",
+				"type": "Expression"
+			}
+		}
+	}
+}
