@@ -21,7 +21,8 @@
 				"type": "AzureBlobFSLocation",
 				"fileName": "Sample_Data_Customers_Products_Orders.xlsx",
 				"fileSystem": "excelwithmultiplesheets"
-			}
+			},
+			"firstRowAsHeader": true
 		},
 		"schema": []
 	}
