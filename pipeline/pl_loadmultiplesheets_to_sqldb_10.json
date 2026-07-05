@@ -101,7 +101,14 @@
 							"outputs": [
 								{
 									"referenceName": "ds_sink_sqltables_10",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"p_schemaname": "loadmultisheets",
+										"p_tablename": {
+											"value": "@item().SheetName",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
