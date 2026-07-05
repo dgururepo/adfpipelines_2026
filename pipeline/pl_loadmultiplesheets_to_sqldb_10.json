@@ -73,6 +73,10 @@
 								},
 								"sink": {
 									"type": "SqlServerSink",
+									"preCopyScript": {
+										"value": "@concat('DROP TABLE IF EXISTS [loadmultisheets].[', item().SheetName, ']')",
+										"type": "Expression"
+									},
 									"writeBehavior": "insert",
 									"sqlWriterUseTableLock": false,
 									"tableOption": "autoCreate"
