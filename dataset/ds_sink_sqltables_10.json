@@ -1,0 +1,31 @@
+{
+	"name": "ds_sink_sqltables_10",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sink_sqltables_10",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_schemaname": {
+				"type": "string",
+				"defaultValue": "loadmultisheets"
+			},
+			"p_tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_schemaname",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_tablename",
+				"type": "Expression"
+			}
+		}
+	}
+}
